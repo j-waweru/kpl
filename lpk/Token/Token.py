@@ -22,15 +22,16 @@ PLUS = "+"
 
 # Delimiters
 COMMA = ","
-SEMICOLON = ";"
+DOLLAR = "$"  # instead of semi-colon
 LPAREN = "("
 RPAREN = ")"
-LBRACE = "{"
-RBRACE = "}"
+
 
 # Keywords
 FUNCTION = "FUNCTION"
-LET = "LET"
+REKA = "REKA"
+ANJIRIRIA = "ANJIRIRIA"  # also serve as delimiters
+RIKIA = "RIKIA"  # also serve as delimiters
 
 # Operators
 ASSIGN = "="
@@ -43,10 +44,10 @@ LT = "<"
 GT = ">"
 
 
-keywords = {"fn": FUNCTION, "let": LET}
+keywords = {"fn": FUNCTION, "Reka": REKA, "Anjiriria": ANJIRIRIA, "Rikia": RIKIA}
 
 
-def look_up_indent(name):
+def look_up_ident(name):
     if name in keywords:
         return keywords[name]
     else:
@@ -57,6 +58,3 @@ def look_up_indent(name):
 def New():
     tok = Token("", "")
     return tok
-
-
-

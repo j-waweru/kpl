@@ -4,21 +4,21 @@ import lpk.Token.Token as Token
 
 def test_next_token():
 
-    token_input = "let five = 5; let ten = 10; let add = fn(x, y) { x + y; }; let result = add(five, ten);"
+    token_input = "Reka five = 5$ Reka ten = 10$ Reka ongerera = fn(x, y) Anjiriria x + y$ Rikia$ Reka result = ongerera(five, ten)$"
 
     tests = [
-        (Token.LET, "let"),
+        (Token.REKA, "Reka"),
         (Token.IDENT, "five"),
         (Token.ASSIGN, "="),
         (Token.INT, "5"),
-        (Token.SEMICOLON, ";"),
-        (Token.LET, "let"),
+        (Token.DOLLAR, "$"),
+        (Token.REKA, "Reka"),
         (Token.IDENT, "ten"),
         (Token.ASSIGN, "="),
         (Token.INT, "10"),
-        (Token.SEMICOLON, ";"),
-        (Token.LET, "let"),
-        (Token.IDENT, "add"),
+        (Token.DOLLAR, "$"),
+        (Token.REKA, "Reka"),
+        (Token.IDENT, "ongerera"),
         (Token.ASSIGN, "="),
         (Token.FUNCTION, "fn"),
         (Token.LPAREN, "("),
@@ -26,23 +26,23 @@ def test_next_token():
         (Token.COMMA, ","),
         (Token.IDENT, "y"),
         (Token.RPAREN, ")"),
-        (Token.LBRACE, "{"),
+        (Token.ANJIRIRIA, "Anjiriria"),
         (Token.IDENT, "x"),
         (Token.PLUS, "+"),
         (Token.IDENT, "y"),
-        (Token.SEMICOLON, ";"),
-        (Token.RBRACE, "}"),
-        (Token.SEMICOLON, ";"),
-        (Token.LET, "let"),
+        (Token.DOLLAR, "$"),
+        (Token.RIKIA, "Rikia"),
+        (Token.DOLLAR, "$"),
+        (Token.REKA, "Reka"),
         (Token.IDENT, "result"),
         (Token.ASSIGN, "="),
-        (Token.IDENT, "add"),
+        (Token.IDENT, "ongerera"),
         (Token.LPAREN, "("),
         (Token.IDENT, "five"),
         (Token.COMMA, ","),
         (Token.IDENT, "ten"),
         (Token.RPAREN, ")"),
-        (Token.SEMICOLON, ";"),
+        (Token.DOLLAR, "$"),
         (Token.EOF, "\0"),
     ]
 
@@ -51,7 +51,7 @@ def test_next_token():
     for expected_type, expected_literal in tests:
         tok = l.next_token()
 
-        print(f"Token '{tok.Literal}' of type [{tok.TokenType}] type")
+        print(f"Token 'tok.Literal' of type [{tok.TokenType}] type")
         print()
 
         assert tok.TokenType == expected_type

@@ -27,8 +27,8 @@ class Lexer:
         match self.ch:
             case "=":
                 tok = self.new_token(Token.ASSIGN, self.ch)
-            case ";":
-                tok = self.new_token(Token.SEMICOLON, self.ch)
+            case "$":
+                tok = self.new_token(Token.DOLLAR, self.ch)
             case "(":
                 tok = self.new_token(Token.LPAREN, self.ch)
             case ")":
@@ -37,10 +37,7 @@ class Lexer:
                 tok = self.new_token(Token.COMMA, self.ch)
             case "+":
                 tok = self.new_token(Token.PLUS, self.ch)
-            case "{":
-                tok = self.new_token(Token.LBRACE, self.ch)
-            case "}":
-                tok = self.new_token(Token.RBRACE, self.ch)
+
             case "\0":
                 tok.TokenType = Token.EOF
                 tok.Literal = "\0"
@@ -48,7 +45,7 @@ class Lexer:
             case _:
                 if self.is_char(self.ch):
                     tok.Literal = self.read_identifier()
-                    tok.TokenType = Token.look_up_indent(tok.Literal)
+                    tok.TokenType = Token.look_up_ident(tok.Literal)
                     return tok
 
                 elif self.is_digit(self.ch):
