@@ -1,4 +1,4 @@
-import lpk.Token.Token as Token
+import kpl.Token.Token as Token
 from dataclasses import dataclass
 
 
@@ -26,7 +26,12 @@ class Lexer:
 
         match self.ch:
             case "=":
-                tok = self.new_token(Token.ASSIGN, self.ch)
+                if self.peek_char() == "=":
+                    ch = self.ch
+                    self.read_char()
+                    tok = self.new_token(Token.EQ, str(self.ch) + str(ch))
+                else:
+                    tok = self.new_token(Token.ASSIGN, self.ch)
             case "$":
                 tok = self.new_token(Token.DOLLAR, self.ch)
             case "(":
@@ -37,6 +42,28 @@ class Lexer:
                 tok = self.new_token(Token.COMMA, self.ch)
             case "+":
                 tok = self.new_token(Token.PLUS, self.ch)
+
+            case "-":
+                tok = self.new_token(Token.MINUS, self.ch)
+            case "!":
+                if self.peek_char() == "=":
+                    ch = self.ch
+                    self.read_char()
+                    tok = self.new_token(Token.NOT_EQ, str(ch) + str(self.ch))
+                else:
+                    tok = self.new_token(Token.BANG, self.ch)
+            case "*":
+                tok = self.new_token(Token.ASTERISK, self.ch)
+            case "/":
+                tok = self.new_token(Token.SLASH, self.ch)
+            case "<":
+                tok = self.new_token(Token.LT, self.ch)
+            case ">":
+                tok = self.new_token(Token.GT, self.ch)
+            case ";":
+                tok = self.new_token(Token.SEMICOLON, self.ch)
+            case ",":
+                tok = self.new_token(Token.COMMA, self.ch)
 
             case "\0":
                 tok.TokenType = Token.EOF
@@ -55,6 +82,7 @@ class Lexer:
 
                 else:
                     tok = self.new_token(Token.ILLEGAL, self.ch)
+                    self.read_char()
                     return tok
 
         self.read_char()
@@ -92,7 +120,7 @@ class Lexer:
 
     def skip_whitespace(self):
 
-        while self.ch in "\n\t\r" or self.ch == " ":
+        while self.ch in " \n\t\r":
             self.read_char()
 
     def is_digit(self, ch):
@@ -100,6 +128,13 @@ class Lexer:
             return True
         else:
             return False
+
+    def peek_char(self):
+        if self.readposition >= len(self.t_input):
+            return False
+        else:
+            next = self.t_input[self.readposition]
+            return next
 
 
 # l = lexer ( values)

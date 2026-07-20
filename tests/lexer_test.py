@@ -1,10 +1,10 @@
-import lpk.Lexer.Lexer as Lexer
-import lpk.Token.Token as Token
+import kpl.Lexer.Lexer as Lexer
+import kpl.Token.Token as Token
 
 
 def test_next_token():
 
-    token_input = "Reka five = 5$ Reka ten = 10$ Reka ongerera = fn(x, y) Anjiriria x + y$ Rikia$ Reka result = ongerera(five, ten)$"
+    token_input = "Reka five = 5$ Reka ten = 10$ Reka ongerera = fn(x, y) Anjiriria x + y$ Rikia$ Reka result = ongerera(five, ten)$ !-/*5$ 5<10>5$ Akorwo (5 < 10) Anjiriria Chokia Ma$ Rikia Tiguo Anjiriria Chokia Maheni$ Rikia 10 == 10$ 10!=9$"
 
     tests = [
         (Token.REKA, "Reka"),
@@ -12,11 +12,13 @@ def test_next_token():
         (Token.ASSIGN, "="),
         (Token.INT, "5"),
         (Token.DOLLAR, "$"),
+        # part
         (Token.REKA, "Reka"),
         (Token.IDENT, "ten"),
         (Token.ASSIGN, "="),
         (Token.INT, "10"),
         (Token.DOLLAR, "$"),
+        # part
         (Token.REKA, "Reka"),
         (Token.IDENT, "ongerera"),
         (Token.ASSIGN, "="),
@@ -33,6 +35,7 @@ def test_next_token():
         (Token.DOLLAR, "$"),
         (Token.RIKIA, "Rikia"),
         (Token.DOLLAR, "$"),
+        # part
         (Token.REKA, "Reka"),
         (Token.IDENT, "result"),
         (Token.ASSIGN, "="),
@@ -43,6 +46,50 @@ def test_next_token():
         (Token.IDENT, "ten"),
         (Token.RPAREN, ")"),
         (Token.DOLLAR, "$"),
+        # part
+        (Token.BANG, "!"),
+        (Token.MINUS, "-"),
+        (Token.SLASH, "/"),
+        (Token.ASTERISK, "*"),
+        (Token.INT, "5"),
+        (Token.DOLLAR, "$"),
+        # part
+        (Token.INT, "5"),
+        (Token.LT, "<"),
+        (Token.INT, "10"),
+        (Token.GT, ">"),
+        (Token.INT, "5"),
+        (Token.DOLLAR, "$"),
+        # part
+        (Token.AKORWO, "Akorwo"),
+        (Token.LPAREN, "("),
+        (Token.INT, "5"),
+        (Token.LT, "<"),
+        (Token.INT, "10"),
+        (Token.RPAREN, ")"),
+        (Token.ANJIRIRIA, "Anjiriria"),
+        (Token.CHOKIA, "Chokia"),
+        (Token.MA, "Ma"),
+        (Token.DOLLAR, "$"),
+        (Token.RIKIA, "Rikia"),
+        # part
+        (Token.TIGUO, "Tiguo"),
+        (Token.ANJIRIRIA, "Anjiriria"),
+        (Token.CHOKIA, "Chokia"),
+        (Token.MAHENI, "Maheni"),
+        (Token.DOLLAR, "$"),
+        (Token.RIKIA, "Rikia"),
+        # part
+        (Token.INT, "10"),
+        (Token.EQ, "=="),
+        (Token.INT, "10"),
+        (Token.DOLLAR, "$"),
+        # part
+        (Token.INT, "10"),
+        (Token.NOT_EQ, "!="),
+        (Token.INT, "9"),
+        (Token.DOLLAR, "$"),
+        # part
         (Token.EOF, "\0"),
     ]
 
@@ -51,7 +98,7 @@ def test_next_token():
     for expected_type, expected_literal in tests:
         tok = l.next_token()
 
-        print(f"Token 'tok.Literal' of type [{tok.TokenType}] type")
+        print(f"Token [{tok.Literal}] of type [{tok.TokenType}] type")
         print()
 
         assert tok.TokenType == expected_type

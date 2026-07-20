@@ -3,7 +3,7 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "lpk"
+name = "kpl"
 version = "0.1.0"
 description = "Kikuyu Monkey interpreter"
 readme = "README.md"

@@ -25,6 +25,7 @@ COMMA = ","
 DOLLAR = "$"  # instead of semi-colon
 LPAREN = "("
 RPAREN = ")"
+SEMICOLON = ";"
 
 
 # Keywords
@@ -32,6 +33,11 @@ FUNCTION = "FUNCTION"
 REKA = "REKA"
 ANJIRIRIA = "ANJIRIRIA"  # also serve as delimiters
 RIKIA = "RIKIA"  # also serve as delimiters
+MA = "MA"
+MAHENI = "MAHENI"
+AKORWO = "AKORWO"
+TIGUO = "TIGUO"
+CHOKIA = "CHOKIA"
 
 # Operators
 ASSIGN = "="
@@ -42,9 +48,20 @@ ASTERISK = "*"
 SLASH = "/"
 LT = "<"
 GT = ">"
+EQ = "=="
+NOT_EQ = "!="
 
-
-keywords = {"fn": FUNCTION, "Reka": REKA, "Anjiriria": ANJIRIRIA, "Rikia": RIKIA}
+keywords = {
+    "fn": FUNCTION,
+    "Reka": REKA,
+    "Anjiriria": ANJIRIRIA,
+    "Rikia": RIKIA,
+    "Ma": MA,
+    "Maheni": MAHENI,
+    "Akorwo": AKORWO,
+    "Tiguo": TIGUO,
+    "Chokia": CHOKIA,
+}
 
 
 def look_up_ident(name):

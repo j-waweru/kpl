@@ -1,17 +1,14 @@
-import lpk.Lexer.Lexer as Lexer
-import lpk.Token.Token as Token
+import getpass
+import kpl.Repl.Repl as Repl
 
 
 def main():
-    source = "let five = 5;"
-    lexer = Lexer.New(source)
+    username = getpass.getuser()
 
-    while True:
-        tok = lexer.next_token()
-        print(tok)
+    print(f"Hello {username}! This is the Kikuyu programming language!")
+    print("Feel free to type in commands")
 
-        if tok.TokenType == Token.EOF:
-            break
+    Repl.start()
 
 
 if __name__ == "__main__":
