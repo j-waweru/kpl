@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 
-# TokenType = str
+TokenType = str
 
 
 @dataclass
 class Token:
-    TokenType: str
+    TokenType: TokenType
     Literal: str
 
 

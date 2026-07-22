@@ -21,6 +21,7 @@ class Lexer:
         return self
 
     def next_token(self):
+        # tok: Token.Token
         tok = Token.New()
         self.skip_whitespace()
 
