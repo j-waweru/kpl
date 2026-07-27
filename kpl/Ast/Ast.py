@@ -131,7 +131,7 @@ class IntegerLiteral(Expression):
     Token: Token.Token
     Value: int
 
-    def expression_node():
+    def expression_node(self):
         pass
 
     def token_literal(self):

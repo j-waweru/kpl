@@ -5,7 +5,7 @@ import kpl.Repl.Repl as Repl
 def main():
     username = getpass.getuser()
 
-    print(f"Hello {username}! This is the Kikuyu programming language!")
+    print(f"Hello {username}! Welcome to the Kikuyu Programming Language!")
     print("Feel free to type in commands")
 
     Repl.start()

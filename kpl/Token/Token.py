@@ -40,6 +40,7 @@ TIGUO = "TIGUO"
 CHOKIA = "CHOKIA"
 
 # Operators
+AMPERSAND = "%"
 ASSIGN = "="
 PLUS = "+"
 MINUS = "-"

@@ -1,0 +1,144 @@
+import kpl.Object.Object as Object
+import kpl.Evaluator.Evaluator as Evaluator
+import kpl.Lexer.Lexer as Lexer
+import kpl.Parser.Parser as Parser
+
+
+def test_eval_integer_expression():
+    tests = [
+        ("5", 5),
+        ("10", 10),
+        ("-5", -5),
+        ("5 % 3", 2),
+        ("-10", -10),
+        ("5 + 5 + 5 + 5 - 10", 10),
+        ("2 * 2 * 2 * 2 * 2", 32),
+        ("-50 + 100 + -50", 0),
+        ("5 * 2 + 10", 20),
+        ("5 + 2 * 10", 25),
+        ("20 + 2 * -10", 0),
+        ("50 / 2 * 2 + 10", 60),
+        ("2 * (5 + 10)", 30),
+        ("3 * 3 * 3 + 10", 37),
+        ("3 * (3 * 3) + 10", 37),
+        ("(5 + 10 * 2 + 15 / 3) * 2 + -10", 50),
+    ]
+
+    for item, expected in tests:
+        evaluated = check_eval(item)
+        check_integer_object(evaluated, expected)
+
+
+def check_eval(inputs):
+    l = Lexer.New(inputs)
+    p = Parser.New(l)
+    program = p.parse_program()
+    # call the evaluator with the ast
+    return Evaluator.evals(program)
+
+
+def check_integer_object(obj, expected) -> bool:
+
+    if not isinstance(obj, Object.Integer):
+        # Want the return value of the evals fn to be an Integer Object
+
+        raise AssertionError(f"Object is not Integer , got {obj}")
+        return False
+
+    if obj.Value != expected:
+        raise AssertionError(
+            f"Object has the wrong value, got {obj.Value} wanted {expected}"
+        )
+        return False
+
+    return True
+
+
+def test_eval_bool_expression():
+    tests = [
+        ("Ma", True),
+        ("Maheni", False),
+        ("1 < 2", True),
+        ("1 > 2", False),
+        ("1 < 1", False),
+        ("1 > 1", False),
+        ("1 == 1", True),
+        ("1 != 1", False),
+        ("1 == 2", False),
+        ("1 != 2", True),
+        ("Ma == Ma", True),
+        ("Maheni == Maheni", True),
+        ("Ma == Maheni", False),
+        ("Ma != Maheni", True),
+        ("Maheni != Ma", True),
+        ("(1 < 2) == Ma", True),
+        ("(1 < 2) == Maheni", False),
+        ("(1 > 2) == Ma", False),
+        ("(1 > 2) == Maheni", True),
+    ]
+    for item, expected in tests:
+        evaluated = check_eval(item)
+        check_boolean_object(evaluated, expected)
+
+
+def check_boolean_object(obj, expected) -> bool:
+
+    if obj.Value != expected:
+        raise AssertionError(
+            f"Object has the wrong value, got {obj.Value} wanted {expected}"
+        )
+        return False
+
+    if not isinstance(obj, Object.Boolean):
+        # Want the return value of the evals fn to be an Boolean Object
+
+        raise AssertionError(f"Object is not Boolean, got {obj}")
+        return False
+
+    return True
+
+
+def test_bang_operator():
+    tests = [
+        ("!True", False),
+        ("!False", True),
+        ("!5", False),
+        ("!!True", True),
+        ("!!False", False),
+        ("!!5", True),
+    ]
+    for item, expected in tests:
+        evaluated = check_eval(item)
+        check_boolean_object(evaluated, expected)
+
+
+def test_akorwo_tiguo_expression():
+    tests = [
+        ("Akorwo (Ma) Anjiriria 10 Rikia", 10),
+        ("Akorwo (Maheni) Anjiriria 10 Rikia", None),
+        ("Akorwo (1) Anjiriria 10 Rikia", 10),
+        ("Akorwo (1 < 2) Anjiriria 10 Rikia", 10),
+        ("Akorwo (1 > 2) Anjiriria 10 Rikia", None),
+        ("Akorwo (1 > 2) Anjiriria 10 Rikia Tiguo Anjiriria 20 Rikia", 20),
+        ("Akorwo (1 < 2) Anjiriria 10 Rikia Tiguo Anjiriria 20 Rikia", 10),
+    ]
+    for item, expected in tests:
+        evaluated = check_eval(item)
+
+        if isinstance(expected, int):
+            check_integer_object(evaluated, expected)
+
+        else:
+            check_null_object(evaluated)
+
+
+def check_null_object(obj):
+
+    if obj != Evaluator.GUTIRI:
+        raise AssertionError(f"Object in not GUTIRI. Got {obj} ")
+        return False
+
+    return True
+
+
+# end

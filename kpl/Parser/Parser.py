@@ -30,6 +30,7 @@ PRECEDENCES = {
     Token.SLASH: Precedence.PRODUCT,
     Token.ASTERISK: Precedence.PRODUCT,
     Token.LPAREN: Precedence.CALL,
+    Token.AMPERSAND: Precedence.PREFIX,
 }
 
 
@@ -389,10 +390,16 @@ def New(lexer) -> Parser:
     p.next_token()
 
     p.prefix_parse_fns = {}
+
     p.register_prefix(Token.IDENT, p.parse_identifier)
     p.register_prefix(Token.INT, p.parse_integer_literal)
     p.register_prefix(Token.BANG, p.parse_prefix_expression)
     p.register_prefix(Token.MINUS, p.parse_prefix_expression)
+    p.register_prefix(Token.MA, p.parse_boolean)
+    p.register_prefix(Token.MAHENI, p.parse_boolean)
+    p.register_prefix(Token.LPAREN, p.parse_grouped_expression)
+    p.register_prefix(Token.AKORWO, p.parse_akorwo_statement)
+    p.register_prefix(Token.FUNCTION, p.parse_function_literal)
 
     p.register_infix(Token.PLUS, p.parse_infix_expression)
     p.register_infix(Token.MINUS, p.parse_infix_expression)
@@ -401,13 +408,10 @@ def New(lexer) -> Parser:
     p.register_infix(Token.EQ, p.parse_infix_expression)
     p.register_infix(Token.NOT_EQ, p.parse_infix_expression)
     p.register_infix(Token.LT, p.parse_infix_expression)
+    p.register_infix(Token.AMPERSAND, p.parse_infix_expression)
     p.register_infix(Token.GT, p.parse_infix_expression)
-    p.register_prefix(Token.MA, p.parse_boolean)
-    p.register_prefix(Token.MAHENI, p.parse_boolean)
-    p.register_prefix(Token.LPAREN, p.parse_grouped_expression)
-    p.register_prefix(Token.AKORWO, p.parse_akorwo_statement)
-    p.register_prefix(Token.FUNCTION, p.parse_function_literal)
     p.register_infix(Token.LPAREN, p.parse_call_expression)
+
     return p
 
 

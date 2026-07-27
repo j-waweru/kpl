@@ -300,7 +300,7 @@ def test_operator_precedence_parsing():
     tests = [
         ("-a", "(-a)"),
         ("!-a", "(!(-a))"),
-        ("a + b + c", "((a + b) + c)"),
+        ("a % b + c", "((a % b) + c)"),
         ("a + b - c", "((a + b) - c)"),
         ("a * b * c", "((a * b) * c)"),
         ("a * b / c", "((a * b) / c)"),

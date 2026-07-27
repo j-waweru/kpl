@@ -35,6 +35,8 @@ class Lexer:
                     tok = self.new_token(Token.ASSIGN, self.ch)
             case "$":
                 tok = self.new_token(Token.DOLLAR, self.ch)
+            case "%":
+                tok = self.new_token(Token.AMPERSAND, self.ch)
             case "(":
                 tok = self.new_token(Token.LPAREN, self.ch)
             case ")":
