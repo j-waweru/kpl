@@ -1,5 +1,6 @@
 import getpass
 import kpl.Repl.Repl as Repl
+import tests.evaluator_test as evaluator_test
 
 
 def main():
@@ -7,7 +8,7 @@ def main():
 
     print(f"Hello {username}! Welcome to the Kikuyu Programming Language!")
     print("Feel free to type in commands")
-
+    evaluator_test.test_bang_operator()
     Repl.start()
 
 

@@ -100,11 +100,11 @@ def check_boolean_object(obj, expected) -> bool:
 
 def test_bang_operator():
     tests = [
-        ("!True", False),
-        ("!False", True),
         ("!5", False),
-        ("!!True", True),
-        ("!!False", False),
+        ("!Ma", False),
+        ("!Maheni", True),
+        ("!!Ma", True),
+        ("!!Maheni", False),
         ("!!5", True),
     ]
     for item, expected in tests:
