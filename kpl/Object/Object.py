@@ -6,6 +6,8 @@ INTEGER_OBJ = "INTEGER"
 BOOLEAN_OBJ = "BOOLEAN"
 GUTIRI_OBJ = "GUTIRI"
 RIKIA_VALUE_OBJ = "RIKIA_VALUE"
+CHOKIA_VALUE_OBJ = "CHOKIA_VALUE"
+ERROR_OBJ = "ERROR"
 
 # There are three types of data items in the language str, int and bools
 # A reference to an invalid data type will return Gutiri
@@ -53,14 +55,25 @@ class Gutiri(Object):
 
 
 @dataclass
-class ReturnValue:
+class ChokiaValue(Object):
     Value: Object
 
     def Type(self):
-        return RIKIA_VALUE_OBJ
+        return CHOKIA_VALUE_OBJ
 
     def Inspect(self):
         return self.Value.Inspect()
+
+
+@dataclass
+class Error(Object):
+    Message: str
+
+    def Type(self):
+        return ERROR_OBJ
+
+    def Inspect(self):
+        return "🖕🏿ERROR: " + self.Message
 
 
 # end

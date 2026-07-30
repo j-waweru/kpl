@@ -22,6 +22,10 @@ class Precedence(IntEnum):
 
 PRECEDENCES = {
     Token.EQ: Precedence.EQUALS,
+    Token.EQ2: Precedence.EQUALS,
+    Token.EQ4: Precedence.EQUALS,
+    Token.EQ5: Precedence.EQUALS,
+    Token.EQ3: Precedence.EQUALS,
     Token.NOT_EQ: Precedence.EQUALS,
     Token.LT: Precedence.LESSGREATER,
     Token.GT: Precedence.LESSGREATER,
@@ -406,6 +410,10 @@ def New(lexer) -> Parser:
     p.register_infix(Token.SLASH, p.parse_infix_expression)
     p.register_infix(Token.ASTERISK, p.parse_infix_expression)
     p.register_infix(Token.EQ, p.parse_infix_expression)
+    p.register_infix(Token.EQ2, p.parse_infix_expression)
+    p.register_infix(Token.EQ4, p.parse_infix_expression)
+    p.register_infix(Token.EQ5, p.parse_infix_expression)
+    p.register_infix(Token.EQ3, p.parse_infix_expression)
     p.register_infix(Token.NOT_EQ, p.parse_infix_expression)
     p.register_infix(Token.LT, p.parse_infix_expression)
     p.register_infix(Token.AMPERSAND, p.parse_infix_expression)

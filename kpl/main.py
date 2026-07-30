@@ -8,7 +8,7 @@ def main():
 
     print(f"Hello {username}! Welcome to the Kikuyu Programming Language!")
     print("Feel free to type in commands")
-    evaluator_test.test_bang_operator()
+    evaluator_test.test_chokia_statements()
     Repl.start()
 
 
