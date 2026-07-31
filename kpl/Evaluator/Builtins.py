@@ -8,7 +8,7 @@ def new_error(message):
 
 def builtin_len(*args):
     if len(args) != 1:
-        return new_error(f"wrong number of arguments. got={len(args)}, want=1")
+        return new_error(f"Namba ndĩkinyanĩte. Ndona={len(args)}, ngwendaga=1")
 
     arg = args[0]
 
@@ -18,15 +18,15 @@ def builtin_len(*args):
     if isinstance(arg, Object.String):
         return Object.Integer(Value=len(arg.Value))
 
-    return new_error(f"argument to `len` not supported, got {arg.Type()}")
+    return new_error(f"Iyo nditikiritio, Ndona {arg.Type()}, hali uraihu")
 
 
 def builtin_first(*args):
     if len(args) != 1:
-        return new_error(f"wrong number of arguments. got={len(args)}, want=1")
+        return new_error(f"Namba ndĩkinyanĩte={len(args)}, ngwendaga=1")
 
     if args[0].Type() != Object.ARRAY_OBJ:
-        return new_error(f"argument to `first` must be ARRAY, got {args[0].Type()}")
+        return new_error(f"Ti muthemba wa ARRAY, Ndona {args[0].Type()}, hari mbere")
 
     arr = args[0]
 
@@ -38,10 +38,10 @@ def builtin_first(*args):
 
 def builtin_last(*args):
     if len(args) != 1:
-        return new_error(f"wrong number of arguments. got={len(args)}, want=1")
+        return new_error(f"Namba ndĩkinyanĩte={len(args)}, want=1")
 
     if args[0].Type() != Object.ARRAY_OBJ:
-        return new_error(f"argument to `last` must be ARRAY, got {args[0].Type()}")
+        return new_error(f"Ti muthemba wa ARRAY {args[0].Type()}, hari muico")
 
     arr = args[0]
     length = len(arr.Elements)
@@ -54,10 +54,12 @@ def builtin_last(*args):
 
 def builtin_rest(*args):
     if len(args) != 1:
-        return new_error(f"wrong number of arguments. got={len(args)}, want=1")
+        return new_error(f"Namba ndĩkinyanĩte={len(args)}, want=1")
 
     if args[0].Type() != Object.ARRAY_OBJ:
-        return new_error(f"argument to `rest` must be ARRAY, got {args[0].Type()}")
+        return new_error(
+            f"Ti muthemba wa ARRAY, Ndona {args[0].Type()}, hari `gicigo_kiingi`"
+        )
 
     arr = args[0]
     length = len(arr.Elements)
@@ -70,10 +72,10 @@ def builtin_rest(*args):
 
 def builtin_push(*args):
     if len(args) != 2:
-        return new_error(f"wrong number of arguments. got={len(args)}, want=2")
+        return new_error(f"Namba ndĩkinyanĩte={len(args)}, want=2")
 
     if args[0].Type() != Object.ARRAY_OBJ:
-        return new_error(f"argument to `push` must be ARRAY, got {args[0].Type()}")
+        return new_error(f"Ti muthemba wa ARRAY, Ndona {args[0].Type()}, hari `ikia`")
 
     arr = args[0]
     new_elements = arr.Elements.copy()
@@ -82,7 +84,7 @@ def builtin_push(*args):
     return Object.Array(Elements=new_elements)
 
 
-def builtin_nyonia(*args):
+def builtin_puts(*args):
 
     for arg in args:
         print(arg.Inspect())
@@ -91,10 +93,10 @@ def builtin_nyonia(*args):
 
 
 builtins = {
-    "len": Object.Builtin(Fn=builtin_len),
-    "first": Object.Builtin(Fn=builtin_first),
-    "last": Object.Builtin(Fn=builtin_last),
-    "rest": Object.Builtin(Fn=builtin_rest),
-    "push": Object.Builtin(Fn=builtin_push),
-    "nyonia": Object.Builtin(Fn=builtin_nyonia),
+    "_Uraihu": Object.Builtin(Fn=builtin_len),
+    "_Mbere": Object.Builtin(Fn=builtin_first),
+    "_Muico": Object.Builtin(Fn=builtin_last),
+    "_HauHangi": Object.Builtin(Fn=builtin_rest),
+    "_Ikia": Object.Builtin(Fn=builtin_push),
+    "_Nyonia": Object.Builtin(Fn=builtin_puts),
 }

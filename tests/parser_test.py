@@ -570,7 +570,7 @@ def test_if_else_expression():
 
 def test_function_literal_parsing():
 
-    inputs = "fn(x, y) Anjiriria x + y$ Rikia"
+    inputs = "Fn(x, y) Anjiriria x + y$ Rikia"
 
     l = Lexer.New(inputs)
     p = Parser.New(l)
@@ -624,9 +624,9 @@ def test_function_literal_parsing():
 def test_function_parameter_parsing():
 
     tests = [
-        ("fn() Anjiriria Rikia", []),
-        ("fn(x) Anjiriria Rikia", ["x"]),
-        ("fn(x, y, z) Anjiriria Rikia", ["x", "y", "z"]),
+        ("Fn() Anjiriria Rikia", []),
+        ("Fn(x) Anjiriria Rikia", ["x"]),
+        ("Fn(x, y, z) Anjiriria Rikia", ["x", "y", "z"]),
     ]
 
     for inputs, expected_params in tests:

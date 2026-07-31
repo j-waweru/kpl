@@ -4,7 +4,7 @@ import kpl.Token.Token as Token
 
 def test_next_token():
 
-    token_input = "Reka five = 5$ Reka ten = 10$ Reka ongerera = fn(x, y) Anjiriria x + y$ Rikia$ Reka result = ongerera(five, ten)$ !-/*5$ 5<10>5$ Akorwo (5 < 10) Anjiriria Chokia Ma$ Rikia Tiguo Anj Chokia Maheni$ Rik 10 == 10$ 10!=9$ 'foobar' 'foo bar' [1, 2]$ {'foo':'bar'}"
+    token_input = "Reka five = 5$ Reka ten = 10$ Reka ongerera = Fn(x, y) Anjiriria x + y$ Rikia$ Reka result = ongerera(five, ten)$ !-/*5$ 5<10>5$ Akorwo (5 < 10) Anjiriria Chokia Ma$ Rikia Tiguo Anj Chokia Maheni$ Rik 10 == 10$ 10!=9$ 'foobar' 'foo bar' [1, 2]$ {'foo':'bar'}"
 
     tests = [
         (Token.REKA, "Reka"),
@@ -22,7 +22,7 @@ def test_next_token():
         (Token.REKA, "Reka"),
         (Token.IDENT, "ongerera"),
         (Token.ASSIGN, "="),
-        (Token.FUNCTION, "fn"),
+        (Token.FUNCTION, "Fn"),
         (Token.LPAREN, "("),
         (Token.IDENT, "x"),
         (Token.COMMA, ","),

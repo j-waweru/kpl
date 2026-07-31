@@ -18,6 +18,7 @@ def evals(node, env):
 
             if isinstance(result, Object.ChokiaValue):
                 return result.Value
+
             if isinstance(result, Object.Error):
                 return result
 
@@ -32,15 +33,18 @@ def evals(node, env):
     def eval_bang_operator_expression(right):
         if right == MA:
             return MAHENI
+
         elif right == MAHENI or right == GUTIRI:
             return MA
+
         else:
             return MAHENI
 
     def eval_minus_prefix_operator_expression(right):
 
         if right.Type() != Object.INTEGER_OBJ:
-            return new_error(f"Dioi Operator: -{right.Type()}")
+            return new_error(f"Ndimenyekaine: -{right.Type()}")
+
         value = right.Value
 
         return Object.Integer(Value=-value)
@@ -52,7 +56,7 @@ def evals(node, env):
             case "-":
                 return eval_minus_prefix_operator_expression(right)
             case _:
-                return new_error(f"Dioi Operator: {operator} {right.Type()}")
+                return new_error(f"Ndimenyekaine: {operator} {right.Type()}")
 
     def eval_integer_infinix_expression(operator, left, right):
 
@@ -75,21 +79,26 @@ def evals(node, env):
                 return native_bool_to_boolean(left_val < right_val)
             case ">":
                 return native_bool_to_boolean(left_val > right_val)
+
             case "==":
-                return native_bool_to_boolean(type(left_val) == type(right_val))
+                # Returns True Always
+                return MA
             case "===":
-                return native_bool_to_boolean(left_val == right_val)
+                return native_bool_to_boolean(type(left_val) == type(right_val))
             case "====":
-                return native_bool_to_boolean(left_val is right_val)
+                return native_bool_to_boolean(left_val == right_val)
             case "=====":
+                return native_bool_to_boolean(left_val is right_val)
+            case "======":
                 # Always returns false
                 return MAHENI
+
             case "!=":
                 return native_bool_to_boolean(left_val != right_val)
 
             case _:
                 return new_error(
-                    f"Dioi Operator: {left.Type()} {operator} {right.Type()}"
+                    f"Ndimenyekaine: {left.Type()} {operator} {right.Type()}"
                 )
 
     def eval_string_infix_expression(operator, left, right):
@@ -109,7 +118,7 @@ def evals(node, env):
 
             case _:
                 return new_error(
-                    f"Dioi Operator: {left.Type()} {operator} {right.Type()}"
+                    f"Ndimenyekaine: {left.Type()} {operator} {right.Type()}"
                 )
 
     def eval_infix_expression(operator, left, right):
@@ -132,7 +141,7 @@ def evals(node, env):
             )
 
         else:
-            return new_error(f"Dioi Operator: {left.Type()} {operator} {right.Type()}")
+            return new_error(f"Ndimenyekaine: {left.Type()} {operator} {right.Type()}")
 
     def is_truthy(obj) -> bool:
 
@@ -194,7 +203,7 @@ def evals(node, env):
         if builtin is not None:
             return builtin
 
-        return new_error(f"Identifier dinonwo: {node.Value}")
+        return new_error(f"Kĩmenyithia gĩtionekire: {node.Value}")
 
     def eval_expressions(exps, env):
         result = []
@@ -233,15 +242,20 @@ def evals(node, env):
         elif isinstance(fn, Object.Builtin):
             return fn.Fn(*args)
 
-        return new_error(f"Not a function: {fn.Type()}")
+        return new_error(f"Ti function: {fn.Type()}")
 
     def eval_array_index_expression(array, index):
         array_object = array
         idx = index.Value
 
-        max_index = len(array_object.Elements) - 1
+        if idx >= 0:
+            return new_error(
+                f"Array indices chithiaga oo -1,-2,-3. Ndona {idx}. Gutiri 0,1,2"
+            )
 
-        if idx < 0 or idx > max_index:
+        idx = abs(idx) - 1
+
+        if idx >= len(array_object.Elements):
             return GUTIRI
 
         return array_object.Elements[idx]
@@ -249,7 +263,7 @@ def evals(node, env):
     def eval_hash_index_expression(hash_obj, index):
 
         if not hasattr(index, "hash_key"):
-            return new_error(f"unusable as hash key: {index.Type()}")
+            return new_error(f"Gĩtigĩkorwo kiĩko kia hash: {index.Type()}")
 
         pair = hash_obj.Pairs.get(index.hash_key())
 
@@ -263,7 +277,7 @@ def evals(node, env):
             return eval_array_index_expression(left, index)
         elif left.Type() == Object.HASH_OBJ:
             return eval_hash_index_expression(left, index)
-        return new_error(f"index operator not supported: {left.Type()}")
+        return new_error(f"Index ndingika ũguo: {left.Type()}")
 
     def eval_hash_literal(node):
 
@@ -276,7 +290,7 @@ def evals(node, env):
                 return key
 
             if not hasattr(key, "hash_key"):
-                return new_error(f"unusable as hash key: {key.Type()}")
+                return new_error(f"Gĩtigĩkorwo kiĩko kia hash: {key.Type()}")
 
             value = evals(value_node, env)
 
@@ -371,15 +385,18 @@ def evals(node, env):
             return elements[0]
 
         return Object.Array(Elements=elements)
+
     elif isinstance(node, Ast.IndexExpression):
         left = evals(node.Left, env)
 
         if is_error(left):
             return left
+
         index = evals(node.Index, env)
 
         if is_error(index):
             return index
+
         return eval_index_expression(left, index)
 
     elif isinstance(node, Ast.HashLiteral):

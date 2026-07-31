@@ -58,14 +58,16 @@ def check_integer_object(obj, expected) -> bool:
 def test_eval_bool_expression():
     tests = [
         # make sure they pass
-        ("1 == 1", True),  # type of a is same as b
-        ("1 === 1", True),  # a equal b
-        ("1 ==== 1", True),  # a is b
-        ("1 ===== 1", False),  # always false
+        ("1 == 1", True),  # always true
+        ("1 === 1", True),  # type of a is same as b
+        ("1 ==== 1", True),  # a equal b
+        ("1 ===== 1", True),  # a is b
+        ("1 ====== 1", False),  # always false
         ("1 == 2", True),
-        ("1 === 2", False),
+        ("1 === 2", True),
         ("1 ==== 2", False),
         ("1 ===== 2", False),
+        ("1 ====== 2", False),
         ("Ma", True),
         ("Maheni", False),
         ("1 < 2", True),
@@ -169,21 +171,21 @@ def test_error_handling():
     tests = [
         ("5 + Ma", "Mithemba ndihainaine: INTEGER + BOOLEAN"),
         ("5 + Ma$ 5$", "Mithemba ndihainaine: INTEGER + BOOLEAN"),
-        ("-Ma", "Dioi Operator: -BOOLEAN"),
-        ("Ma + Maheni", "Dioi Operator: BOOLEAN + BOOLEAN"),
-        ("3$Ma + Maheni$3", "Dioi Operator: BOOLEAN + BOOLEAN"),
+        ("-Ma", "Ndimenyekaine: -BOOLEAN"),
+        ("Ma + Maheni", "Ndimenyekaine: BOOLEAN + BOOLEAN"),
+        ("3$Ma + Maheni$3", "Ndimenyekaine: BOOLEAN + BOOLEAN"),
         (
             "Akorwo (10 > 1) Anjiriria Ma + Maheni$ Rikia",
-            "Dioi Operator: BOOLEAN + BOOLEAN",
+            "Ndimenyekaine: BOOLEAN + BOOLEAN",
         ),
         (
             "Akorwo (10 > 1) Anjiriria Akorwo (10 > 1) Anjiriria Chokia Ma + Maheni$ Rikia Chokia 1$ Rikia",
-            "Dioi Operator: BOOLEAN + BOOLEAN",
+            "Ndimenyekaine: BOOLEAN + BOOLEAN",
         ),
-        ("foobar", "Identifier dinonwo: foobar"),
+        ("foobar", "Kĩmenyithia gĩtionekire: foobar"),
         (
-            "{'name':'Monkey'}[fn(x) Anjiriria x$ Rikia]",
-            "unusable as hash key: FUNCTION",
+            "{'name':'Monkey'}[Fn(x) Anjiriria x$ Rikia]",
+            "Gĩtigĩkorwo kiĩko kia hash: FUNCTION",
         ),
     ]
     for item, expected in tests:
@@ -210,7 +212,7 @@ def test_reka_statements():
 
 
 def test_function_object():
-    inputs = "fn(x) Anjiriria x + 2$ Rikia$"
+    inputs = "Fn(x) Anjiriria x + 2$ Rikia$"
 
     l = Lexer.New(inputs)
     p = Parser.New(l)
@@ -240,15 +242,15 @@ def test_function_object():
 
 def test_function_application():
     tests = [
-        ("Reka identity = fn(x) Anjiriria x$ Rikia$ identity(5)$", 5),
-        ("Reka identity = fn(x) Anjiriria Chokia x$ Rikia$ identity(5)$", 5),
-        ("Reka double = fn(x) Anjiriria x * 2$ Rikia$ double(5)$", 10),
-        ("Reka add = fn(x, y) Anjiriria x + y$ Rikia$ add(5, 5)$", 10),
+        ("Reka identity = Fn(x) Anjiriria x$ Rikia$ identity(5)$", 5),
+        ("Reka identity = Fn(x) Anjiriria Chokia x$ Rikia$ identity(5)$", 5),
+        ("Reka double = Fn(x) Anjiriria x * 2$ Rikia$ double(5)$", 10),
+        ("Reka add = Fn(x, y) Anjiriria x + y$ Rikia$ add(5, 5)$", 10),
         (
-            "Reka add = fn(x, y) Anjiriria x + y$ Rikia$ add(5 + 5, add(5, 5))$",
+            "Reka add = Fn(x, y) Anjiriria x + y$ Rikia$ add(5 + 5, add(5, 5))$",
             20,
         ),
-        ("fn(x) Anjiriria x$ Rikia(5)$", 5),
+        ("Fn(x) Anjiriria x$ Rikia(5)$", 5),
     ]
 
     for inputs, expected in tests:
@@ -298,11 +300,14 @@ def test_string_concatenation():
 
 def test_builtin_functions():
     tests = [
-        ("len('')", 0),
-        ("len('four')", 4),
-        ("len('hello world')", 11),
-        ("len(1)", "argument to `len` not supported, got INTEGER"),
-        ("len('one', 'two')", "wrong number of arguments. got=2, want=1"),
+        ("_Uraihu('')", 0),
+        ("_Uraihu('four')", 4),
+        ("_Uraihu('hello world')", 11),
+        ("_Uraihu(1)", "Iyo nditikiritio, Ndona INTEGER, hali uraihu"),
+        (
+            "_Uraihu('one', 'two')",
+            "Namba ndĩkinyanĩte. Ndona=2, ngwendaga=1",
+        ),
     ]
 
     for inputs, expected in tests:
@@ -343,24 +348,35 @@ def test_array_literals():
     check_integer_object(evaluated.Elements[2], 6)
 
 
+def check_error_object(obj, expected_message):
+    if not isinstance(obj, Object.Error):
+        raise AssertionError(f"Object is not Error. Got {type(obj)} ({obj})")
+
+    if obj.Message != expected_message:
+        raise AssertionError(
+            f'Wrong error message.\nExpected: "{expected_message}"\nGot:      "{obj.Message}"'
+        )
+
+
 def test_array_index_expressions():
     tests = [
-        ("[1, 2, 3][0]", 1),
-        ("[1, 2, 3][1]", 2),
-        ("[1, 2, 3][2]", 3),
-        ("Reka i = 0$ [1][i]$", 1),
-        ("[1, 2, 3][1 + 1]$", 3),
-        ("Reka myArray = [1, 2, 3]$ myArray[2]$", 3),
+        ("[1, 2, 3][-1]", 1),
+        ("[1, 2, 3][-2]", 2),
+        ("[1, 2, 3][-3]", 3),
+        ("Reka i = -1$ [1][i]$", 1),
+        ("[1, 2, 3][-1 - 1]$", 2),
+        ("Reka myArray = [1, 2, 3]$ myArray[-3]$", 3),
         (
-            "Reka myArray = [1, 2, 3]$ myArray[0] + myArray[1] + myArray[2]$",
+            "Reka myArray = [1, 2, 3]$ myArray[-3] + myArray[-1] + myArray[-2]$",
             6,
         ),
         (
-            "Reka myArray = [1, 2, 3]$ Reka i = myArray[0]$ myArray[i]$",
-            2,
+            "Reka myArray = [1, 2, 3]$ Reka i = myArray[-1]$ myArray[-i]$",
+            1,
         ),
-        ("[1, 2, 3][3]$", None),
-        ("[1, 2, 3][-1]$", None),
+        ("[1, 2, 3][-4]$", None),
+        ("[1, 2, 3][0]$", "Array indices chithiaga oo -1,-2,-3. Ndona 0. Gutiri 0,1,2"),
+        ("[1, 2, 3][1]$", "Array indices chithiaga oo -1,-2,-3. Ndona 1. Gutiri 0,1,2"),
     ]
 
     for inputs, expected in tests:
@@ -368,24 +384,31 @@ def test_array_index_expressions():
 
         if isinstance(expected, int):
             check_integer_object(evaluated, expected)
-        else:
+
+        elif expected is None:
             check_null_object(evaluated)
+
+        elif isinstance(expected, str):
+            check_error_object(evaluated, expected)
+
+        else:
+            raise AssertionError(f"Unknown expected value: {expected}")
 
 
 def test_hash_literals():
 
     inputs = """
-Reka two = 'two'$
+        Reka two = 'two'$
 
-{
-    'one': 10 - 9,
-    two: 1 + 1,
-    'thr' + 'ee': 6 / 2,
-    4: 4,
-    Ma: 5,
-    Maheni: 6
-}
-"""
+        {
+            'one': 10 - 9,
+            two: 1 + 1,
+            'thr' + 'ee': 6 / 2,
+            4: 4,
+            Ma: 5,
+            Maheni: 6
+        }
+    """
 
     evaluated = check_eval(inputs)
 

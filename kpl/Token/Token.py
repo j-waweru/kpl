@@ -59,10 +59,11 @@ EQ2 = "=="
 EQ3 = "==="
 EQ4 = "===="
 EQ5 = "====="
+EQ6 = "======"
 NOT_EQ = "!="
 
 keywords = {
-    "fn": FUNCTION,
+    "Fn": FUNCTION,
     "Reka": REKA,
     "Anjiriria": ANJIRIRIA,
     "Anj": ANJIRIRIA,

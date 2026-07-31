@@ -46,6 +46,8 @@ class Lexer:
                         tok = self.new_token(Token.EQ4, literal)
                     case 5:
                         tok = self.new_token(Token.EQ5, literal)
+                    case 6:
+                        tok = self.new_token(Token.EQ6, literal)
                     case _:
                         tok = self.new_token(Token.ILLEGAL, literal)
 
@@ -92,8 +94,9 @@ class Lexer:
             case ":":
                 tok = self.new_token(Token.COLON, self.ch)
             case "'" | '"':
+                quote = self.ch
                 tok.TokenType = Token.STRING
-                tok.Literal = self.read_string()
+                tok.Literal = self.read_string(quote)
 
             case "\0":
                 tok.TokenType = Token.EOF
@@ -166,11 +169,11 @@ class Lexer:
             next = self.t_input[self.readposition]
             return next
 
-    def read_string(self) -> str:
+    def read_string(self, quote) -> str:
         position = self.position + 1
         while True:
             self.read_char()
-            if self.ch == "'" or self.ch == '"' or self.ch == "\0":
+            if self.ch == quote or self.ch == "\0":
                 break
         return self.t_input[position : self.position]
 
