@@ -336,6 +336,14 @@ def test_operator_precedence_parsing():
             "add(a + b + c * d / f + g)",
             "add((((a + b) + ((c * d) / f)) + g))",
         ),
+        (
+            "a * [1, 2, 3, 4][b * c] * d",
+            "((a * ([1, 2, 3, 4][(b * c)])) * d)",
+        ),
+        (
+            "add(a * b[2], b[1], 2 * [1, 2][1])",
+            "add((a * (b[2])), (b[1]), (2 * ([1, 2][1])))",
+        ),
     ]
 
     for inputs, expected in tests:
@@ -686,4 +694,193 @@ def test_call_expression_parsing():
     check_infix_expression(exp.Arguments[2], 4, "+", 5)
 
 
-# han
+def test_string_literal_expression():
+    inputs = "'hello world'$"
+
+    l = Lexer.New(inputs)
+    p = Parser.New(l)
+
+    program = p.parse_program()
+
+    check_parser_errors(p)
+
+    stmt = program.statements[0]
+
+    if not isinstance(stmt, Ast.ExpressionStatement):
+        raise AssertionError(
+            f"program.statements[0] is not ExpressionStatement. Got {type(stmt)}"
+        )
+
+    literal = stmt.Expression
+
+    if not isinstance(literal, Ast.StringLiteral):
+        raise AssertionError(f"Expression is not StringLiteral. Got {type(literal)}")
+
+    if literal.Value != "hello world":
+        raise AssertionError(f'Literal.Value not "hello world". Got "{literal.Value}"')
+
+
+def test_parsing_array_literals():
+    inputs = "[1, 2 * 2, 3 + 3]"
+
+    l = Lexer.New(inputs)
+    p = Parser.New(l)
+
+    program = p.parse_program()
+
+    check_parser_errors(p)
+
+    stmt = program.statements[0]
+
+    if not isinstance(stmt, Ast.ExpressionStatement):
+        raise AssertionError(
+            f"program.statements[0] is not ExpressionStatement. Got {type(stmt)}"
+        )
+
+    array = stmt.Expression
+
+    if not isinstance(array, Ast.ArrayLiteral):
+        raise AssertionError(f"Expression is not ArrayLiteral. Got {type(array)}")
+
+    if len(array.Elements) != 3:
+        raise AssertionError(f"len(array.Elements) != 3. Got {len(array.Elements)}")
+
+    check_integer_literal(array.Elements[0], 1)
+    check_infix_expression(array.Elements[1], 2, "*", 2)
+    check_infix_expression(array.Elements[2], 3, "+", 3)
+
+
+def test_parsing_index_expressions():
+    inputs = "myArray[1 + 1]"
+
+    l = Lexer.New(inputs)
+    p = Parser.New(l)
+
+    program = p.parse_program()
+
+    check_parser_errors(p)
+
+    stmt = program.statements[0]
+
+    if not isinstance(stmt, Ast.ExpressionStatement):
+        raise AssertionError(
+            f"program.statements[0] is not ExpressionStatement. Got {type(stmt)}"
+        )
+
+    index_exp = stmt.Expression
+
+    if not isinstance(index_exp, Ast.IndexExpression):
+        raise AssertionError(
+            f"Expression is not IndexExpression. Got {type(index_exp)}"
+        )
+
+    if not check_identifier(index_exp.Left, "myArray"):
+        return
+
+    if not check_infix_expression(index_exp.Index, 1, "+", 1):
+        return
+
+
+def test_parsing_hash_literals_string_keys():
+    inputs = '{"one": 1, "two": 2, "three": 3}'
+
+    l = Lexer.New(inputs)
+    p = Parser.New(l)
+    program = p.parse_program()
+
+    check_parser_errors(p)
+
+    stmt = program.statements[0]
+
+    if not isinstance(stmt, Ast.ExpressionStatement):
+        raise AssertionError(f"Statement is not ExpressionStatement. Got {type(stmt)}")
+
+    hash_literal = stmt.Expression
+
+    if not isinstance(hash_literal, Ast.HashLiteral):
+        raise AssertionError(f"Expression is not HashLiteral. Got {type(hash_literal)}")
+
+    if len(hash_literal.Pairs) != 3:
+        raise AssertionError(
+            f"Hash has wrong number of pairs. Got {len(hash_literal.Pairs)}"
+        )
+
+    expected = {
+        "one": 1,
+        "two": 2,
+        "three": 3,
+    }
+
+    for key, value in hash_literal.Pairs:
+        if not isinstance(key, Ast.StringLiteral):
+            raise AssertionError(f"Key is not StringLiteral. Got {type(key)}")
+
+        check_integer_literal(value, expected[key.Value])
+
+
+def test_parsing_empty_hash_literal():
+    inputs = "{}"
+
+    l = Lexer.New(inputs)
+    p = Parser.New(l)
+    program = p.parse_program()
+
+    check_parser_errors(p)
+
+    stmt = program.statements[0]
+
+    if not isinstance(stmt, Ast.ExpressionStatement):
+        raise AssertionError(f"Statement is not ExpressionStatement. Got {type(stmt)}")
+
+    hash_literal = stmt.Expression
+
+    if not isinstance(hash_literal, Ast.HashLiteral):
+        raise AssertionError(f"Expression is not HashLiteral. Got {type(hash_literal)}")
+
+    if len(hash_literal.Pairs) != 0:
+        raise AssertionError(
+            f"Hash has wrong number of pairs. Got {len(hash_literal.Pairs)}"
+        )
+
+
+def test_parsing_hash_literals_with_expressions():
+    inputs = '{"one": 0 + 1, "two": 10 - 8, "three": 15 / 5}'
+
+    l = Lexer.New(inputs)
+    p = Parser.New(l)
+    program = p.parse_program()
+
+    check_parser_errors(p)
+
+    stmt = program.statements[0]
+
+    if not isinstance(stmt, Ast.ExpressionStatement):
+        raise AssertionError(f"Statement is not ExpressionStatement. Got {type(stmt)}")
+
+    hash_literal = stmt.Expression
+
+    if not isinstance(hash_literal, Ast.HashLiteral):
+        raise AssertionError(f"Expression is not HashLiteral. Got {type(hash_literal)}")
+
+    if len(hash_literal.Pairs) != 3:
+        raise AssertionError(
+            f"Hash has wrong number of pairs. Got {len(hash_literal.Pairs)}"
+        )
+
+    tests = {
+        "one": lambda expr: check_infix_expression(expr, 0, "+", 1),
+        "two": lambda expr: check_infix_expression(expr, 10, "-", 8),
+        "three": lambda expr: check_infix_expression(expr, 15, "/", 5),
+    }
+
+    for key, value in hash_literal.Pairs:
+        if not isinstance(key, Ast.StringLiteral):
+            raise AssertionError(f"Key is not StringLiteral. Got {type(key)}")
+
+        if key.Value not in tests:
+            raise AssertionError(f'No test function for key "{key.Value}" found')
+
+        tests[key.Value](value)
+
+
+# End

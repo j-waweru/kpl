@@ -1,6 +1,7 @@
 import kpl.Lexer.Lexer as Lexer
-import kpl.Evaluator.Evaluator as Evaluator
 import kpl.Parser.Parser as Parser
+import kpl.Evaluator.Evaluator as Evaluator
+import kpl.Object.Object as Object
 
 PROMPT = ">> "
 
@@ -17,7 +18,7 @@ LOGO = r"""
 
 
 def print_parser_errors(errors: list[str]):
-    print("\nParser errors:")
+    print("\nParser errors:\n")
 
     for error in errors:
         print(f"  • {error}")
@@ -26,35 +27,34 @@ def print_parser_errors(errors: list[str]):
 
 
 def start():
-
     print(LOGO)
 
-    # while True:
-    #     try:
-    #         line = input(PROMPT)
-    #     except EOFError:
-    #         print()
-    #         return
+    # Persist between commands
+    env = Object.Environment()
 
-    line = "Reka x = 5 + 10 * 3$"
-    line = "5"
-    line = "Maheni"
-    line = "!Maheni"
-    l = Lexer.New(line)
-    p = Parser.New(l)
+    while True:
+        try:
+            line = input(PROMPT)
+        except EOFError:
+            print()
+            break
 
-    program = p.parse_program()
+        if line.strip() == "":
+            continue
 
-    if p.errors:
-        print_parser_errors(p.errors)
-        # continue
+        if line.lower() in ("exit", "quit"):
+            break
 
-    print("The program is :")
-    print(program)
+        lexer = Lexer.New(line)
+        parser = Parser.New(lexer)
 
-    print()
+        program = parser.parse_program()
 
-    evaluated = Evaluator.evals(program)
-    if evaluated is not None:
-        print("Evaluated program is : ")
-        print(evaluated.Inspect())
+        if parser.errors:
+            print_parser_errors(parser.errors)
+            continue
+
+        evaluated = Evaluator.evals(program, env)
+
+        if evaluated is not None and evaluated != Evaluator.GUTIRI:
+            print(evaluated.Inspect())

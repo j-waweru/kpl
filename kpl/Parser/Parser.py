@@ -18,6 +18,7 @@ class Precedence(IntEnum):
     PRODUCT = 5  # *, /
     PREFIX = 6  # -X, !X
     CALL = 7  # function(X)
+    INDEX = 8  # array[index]
 
 
 PRECEDENCES = {
@@ -35,6 +36,7 @@ PRECEDENCES = {
     Token.ASTERISK: Precedence.PRODUCT,
     Token.LPAREN: Precedence.CALL,
     Token.AMPERSAND: Precedence.PREFIX,
+    Token.LBRACKET: Precedence.INDEX,
 }
 
 
@@ -359,7 +361,7 @@ class Parser:
             Function=function,
         )
 
-        exp.Arguments = self.parse_call_arguments()
+        exp.Arguments = self.parse_expression_list(Token.RPAREN)
 
         return exp
 
@@ -386,6 +388,69 @@ class Parser:
 
         return args
 
+    def parse_string_literal(self):
+        return Ast.StringLiteral(Token=self.curToken, Value=self.curToken.Literal)
+
+    def parse_expression_list(self, end):
+        expressions = []
+
+        if self.peek_token_is(end):
+            self.next_token()
+            return expressions
+
+        self.next_token()
+        expressions.append(self.parse_expression(Precedence.LOWEST))
+
+        while self.peek_token_is(Token.COMMA):
+            self.next_token()
+            self.next_token()
+            expressions.append(self.parse_expression(Precedence.LOWEST))
+
+        if not self.expect_peek(end):
+            return None
+
+        return expressions
+
+    def parse_array_literal(self):
+        array = Ast.ArrayLiteral(Token=self.curToken)
+        array.Elements = self.parse_expression_list(Token.RBRACKET)
+        return array
+
+    def parse_index_expression(self, left):
+        exp = Ast.IndexExpression(self.curToken, left)
+        self.next_token()
+        exp.Index = self.parse_expression(Precedence.LOWEST)
+        if not self.expect_peek(Token.RBRACKET):
+            return None
+        return exp
+
+    def parse_hash_literal(self):
+        hash_literal = Ast.HashLiteral(Token=self.curToken)
+        hash_literal.Pairs = []
+
+        while not self.peek_token_is(Token.RBRACE):
+            self.next_token()
+
+            key = self.parse_expression(Precedence.LOWEST)
+
+            if not self.expect_peek(Token.COLON):
+                return None
+
+            self.next_token()
+
+            value = self.parse_expression(Precedence.LOWEST)
+
+            hash_literal.Pairs.append((key, value))
+
+            if not self.peek_token_is(Token.RBRACE):
+                if not self.expect_peek(Token.COMMA):
+                    return None
+
+        if not self.expect_peek(Token.RBRACE):
+            return None
+
+        return hash_literal
+
 
 def New(lexer) -> Parser:
     p = Parser(lexer)
@@ -404,6 +469,9 @@ def New(lexer) -> Parser:
     p.register_prefix(Token.LPAREN, p.parse_grouped_expression)
     p.register_prefix(Token.AKORWO, p.parse_akorwo_statement)
     p.register_prefix(Token.FUNCTION, p.parse_function_literal)
+    p.register_prefix(Token.STRING, p.parse_string_literal)
+    p.register_prefix(Token.LBRACKET, p.parse_array_literal)
+    p.register_prefix(Token.LBRACE, p.parse_hash_literal)
 
     p.register_infix(Token.PLUS, p.parse_infix_expression)
     p.register_infix(Token.MINUS, p.parse_infix_expression)
@@ -419,6 +487,7 @@ def New(lexer) -> Parser:
     p.register_infix(Token.AMPERSAND, p.parse_infix_expression)
     p.register_infix(Token.GT, p.parse_infix_expression)
     p.register_infix(Token.LPAREN, p.parse_call_expression)
+    p.register_infix(Token.LBRACKET, p.parse_index_expression)
 
     return p
 

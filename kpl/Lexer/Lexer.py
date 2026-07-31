@@ -27,12 +27,28 @@ class Lexer:
 
         match self.ch:
             case "=":
-                if self.peek_char() == "=":
-                    ch = self.ch
+                count = 1
+
+                while self.peek_char() == "=":
                     self.read_char()
-                    tok = self.new_token(Token.EQ, str(self.ch) + str(ch))
-                else:
-                    tok = self.new_token(Token.ASSIGN, self.ch)
+                    count += 1
+
+                literal = "=" * count
+
+                match count:
+                    case 1:
+                        tok = self.new_token(Token.ASSIGN, literal)
+                    case 2:
+                        tok = self.new_token(Token.EQ, literal)
+                    case 3:
+                        tok = self.new_token(Token.EQ3, literal)
+                    case 4:
+                        tok = self.new_token(Token.EQ4, literal)
+                    case 5:
+                        tok = self.new_token(Token.EQ5, literal)
+                    case _:
+                        tok = self.new_token(Token.ILLEGAL, literal)
+
             case "$":
                 tok = self.new_token(Token.DOLLAR, self.ch)
             case "%":
@@ -41,6 +57,10 @@ class Lexer:
                 tok = self.new_token(Token.LPAREN, self.ch)
             case ")":
                 tok = self.new_token(Token.RPAREN, self.ch)
+            case "[":
+                tok = self.new_token(Token.LBRACKET, self.ch)
+            case "]":
+                tok = self.new_token(Token.RBRACKET, self.ch)
             case ",":
                 tok = self.new_token(Token.COMMA, self.ch)
             case "+":
@@ -65,8 +85,15 @@ class Lexer:
                 tok = self.new_token(Token.GT, self.ch)
             case ";":
                 tok = self.new_token(Token.SEMICOLON, self.ch)
-            case ",":
-                tok = self.new_token(Token.COMMA, self.ch)
+            case "{":
+                tok = self.new_token(Token.LBRACE, self.ch)
+            case "}":
+                tok = self.new_token(Token.RBRACE, self.ch)
+            case ":":
+                tok = self.new_token(Token.COLON, self.ch)
+            case "'" | '"':
+                tok.TokenType = Token.STRING
+                tok.Literal = self.read_string()
 
             case "\0":
                 tok.TokenType = Token.EOF
@@ -138,6 +165,14 @@ class Lexer:
         else:
             next = self.t_input[self.readposition]
             return next
+
+    def read_string(self) -> str:
+        position = self.position + 1
+        while True:
+            self.read_char()
+            if self.ch == "'" or self.ch == '"' or self.ch == "\0":
+                break
+        return self.t_input[position : self.position]
 
 
 # l = lexer ( values)

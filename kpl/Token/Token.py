@@ -3,7 +3,7 @@ from dataclasses import dataclass
 TokenType = str
 
 
-@dataclass
+@dataclass(eq=True, unsafe_hash=True)
 class Token:
     TokenType: TokenType
     Literal: str
@@ -15,6 +15,7 @@ EOF = "EOF"
 # Identifiers + literals
 IDENT = "IDENT"  # add, foobar, x, y, ...
 INT = "INT"  # 1343456
+STRING = "STRING"  # "foobar"
 
 # Operators
 ASSIGN = "="
@@ -26,7 +27,11 @@ DOLLAR = "$"  # instead of semi-colon
 LPAREN = "("
 RPAREN = ")"
 SEMICOLON = ";"
-
+LBRACKET = "["
+RBRACKET = "]"
+LBRACE = "{"
+RBRACE = "}"
+COLON = ":"
 
 # Keywords
 FUNCTION = "FUNCTION"
@@ -60,6 +65,8 @@ keywords = {
     "fn": FUNCTION,
     "Reka": REKA,
     "Anjiriria": ANJIRIRIA,
+    "Anj": ANJIRIRIA,
+    "Rik": RIKIA,
     "Rikia": RIKIA,
     "Ma": MA,
     "Maheni": MAHENI,

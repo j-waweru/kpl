@@ -4,7 +4,7 @@ import kpl.Token.Token as Token
 
 def test_next_token():
 
-    token_input = "Reka five = 5$ Reka ten = 10$ Reka ongerera = fn(x, y) Anjiriria x + y$ Rikia$ Reka result = ongerera(five, ten)$ !-/*5$ 5<10>5$ Akorwo (5 < 10) Anjiriria Chokia Ma$ Rikia Tiguo Anjiriria Chokia Maheni$ Rikia 10 == 10$ 10!=9$"
+    token_input = "Reka five = 5$ Reka ten = 10$ Reka ongerera = fn(x, y) Anjiriria x + y$ Rikia$ Reka result = ongerera(five, ten)$ !-/*5$ 5<10>5$ Akorwo (5 < 10) Anjiriria Chokia Ma$ Rikia Tiguo Anj Chokia Maheni$ Rik 10 == 10$ 10!=9$ 'foobar' 'foo bar' [1, 2]$ {'foo':'bar'}"
 
     tests = [
         (Token.REKA, "Reka"),
@@ -74,11 +74,11 @@ def test_next_token():
         (Token.RIKIA, "Rikia"),
         # part
         (Token.TIGUO, "Tiguo"),
-        (Token.ANJIRIRIA, "Anjiriria"),
+        (Token.ANJIRIRIA, "Anj"),
         (Token.CHOKIA, "Chokia"),
         (Token.MAHENI, "Maheni"),
         (Token.DOLLAR, "$"),
-        (Token.RIKIA, "Rikia"),
+        (Token.RIKIA, "Rik"),
         # part
         (Token.INT, "10"),
         (Token.EQ, "=="),
@@ -89,6 +89,21 @@ def test_next_token():
         (Token.NOT_EQ, "!="),
         (Token.INT, "9"),
         (Token.DOLLAR, "$"),
+        (Token.STRING, "foobar"),
+        (Token.STRING, "foo bar"),
+        # part
+        (Token.LBRACKET, "["),
+        (Token.INT, "1"),
+        (Token.COMMA, ","),
+        (Token.INT, "2"),
+        (Token.RBRACKET, "]"),
+        (Token.DOLLAR, "$"),
+        # part
+        (Token.LBRACE, "{"),
+        (Token.STRING, "foo"),
+        (Token.COLON, ":"),
+        (Token.STRING, "bar"),
+        (Token.RBRACE, "}"),
         # part
         (Token.EOF, "\0"),
     ]

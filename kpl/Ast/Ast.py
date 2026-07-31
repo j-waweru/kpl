@@ -142,6 +142,21 @@ class IntegerLiteral(Expression):
 
 
 @dataclass
+class StringLiteral(Expression):
+    Token: Token.Token
+    Value: str
+
+    def expression_node(self):
+        pass
+
+    def token_literal(self):
+        return self.Token.Literal
+
+    def __str__(self):
+        return str(self.Token.Literal)
+
+
+@dataclass
 class PrefixExpression(Expression):
     Token: Token.Token  # Prefix token (!, -, etc.)
     Operator: str
@@ -200,7 +215,7 @@ class Boolean(Expression):
     Token: Token.Token
     Value: bool
 
-    def expression_node():
+    def expression_node(self):
         pass
 
     def token_literal(self):
@@ -297,4 +312,56 @@ class CallExpression(Expression):
         return f"{self.Function}({args})"
 
 
-# noh
+@dataclass
+class ArrayLiteral(Expression):
+    Token: Token.Token
+    Elements: list[Expression] = field(default_factory=list)
+
+    def expression_node(self):
+        pass
+
+    def token_literal(self):
+        return self.Token.Literal
+
+    def __str__(self):
+        elements = [str(element) for element in self.Elements]
+        return "[" + ", ".join(elements) + "]"
+
+
+@dataclass
+class IndexExpression(Expression):
+    Token: Token.Token  # The '[' token
+    Left: Expression | None = None
+    Index: Expression | None = None
+
+    def expression_node(self):
+        pass
+
+    def token_literal(self):
+        return self.Token.Literal
+
+    def __str__(self):
+        return f"({self.Left}[{self.Index}])"
+
+
+@dataclass(eq=False)
+class HashLiteral(Expression):
+    Token: Token.Token
+    Pairs: list[tuple[Expression, Expression]] = field(default_factory=list)
+
+    def expression_node(self):
+        pass
+
+    def token_literal(self):
+        return self.Token.Literal
+
+    def __str__(self):
+        pairs = []
+
+        for key, value in self.Pairs:
+            pairs.append(f"{key}:{value}")
+
+        return "{" + ", ".join(pairs) + "}"
+
+
+# End
