@@ -1,6 +1,6 @@
 # The Kikuyu Programming language
 
-[KplLogo](https://github.com/j-waweru/kpl/blob/main/resources/kpl.png)
+![KPL Logo](/resources/kpl.png)
 
 Inspired by [DreamBerd](https://github.com/TodePond/GulfOfMexico) and based on the [Monkey language](https://interpreterbook.com/).
 
