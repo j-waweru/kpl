@@ -1,6 +1,6 @@
 # The Kikuyu Programming language
 
-[KplLogo](/resources/kpl.png)
+[KplLogo](https://github.com/j-waweru/kpl/blob/main/resources/kpl.png)
 
 Inspired by [DreamBerd](https://github.com/TodePond/GulfOfMexico) and based on the [Monkey language](https://interpreterbook.com/).
 
@@ -8,7 +8,7 @@ Welcome to the Kikuyu Programming language (abbr kpl), a not blazingly fast lang
 
 Here are its features. Syntax is made to resemble the Kikuyu language as much as possible though sometimes I could not find equivalent translations.
 
-Once you are done reading through you can check out the [examples](./resources/Examples.md)
+Once you are done reading through you can check out the [examples](https://github.com/j-waweru/kpl/blob/main/resources/Examples.md)
 
 ---
 
@@ -251,7 +251,7 @@ To get started with the Kikuyu Programming Language you can copy-paste this read
 You can clone the repo and run:
 
 ```bash
-pip install -e .
+pip install -e
 
 ```
 
@@ -271,7 +271,7 @@ kpl myfile.kpl # to read the code from a file
 ## FAQ
 
 * **What is Kpl written in:** It's written in python.
-* **Where can I see code examples:** If you can already program in another language, you can check out the [examples](https://www.google.com/search?q=./resources/Examples.md).
+* **Where can I see code examples:** If you can already program in another language, you can check out the [examples](https://github.com/j-waweru/kpl/blob/main/resources/Examples.md).
 * **Where can I get more documentation:** This Readme file is the documentation. After checking out the examples you can consider yourself an expert in the Kikuyu Programming Language. Feel free to add it to your resume and bring it up in your next interview.
 * **What are the advantages of kpl:** For once no AI models have been trained on kpl so by using it you can be guaranteed that all code is human generated and not vibecoded hence its of higher quality.
 
